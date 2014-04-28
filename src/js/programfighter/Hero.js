@@ -88,5 +88,6 @@ var Hero = (function () {
     Hero.MAX_POWER = 20;
     Hero.LONG_JUMP = 28.0;
     Hero.SHORT_JUMP = 16.0;
+    Hero.NO_OP_FRAMES_FOR_HITTING = 10;
     return Hero;
 })();

@@ -51,7 +51,7 @@ var HittingState = (function (_super) {
         new DeadState(this.hero);
     };
     HittingState.prototype.enterframe = function(){
-        if(this.step > 10) {
+        if(this.step > Hero.NO_OP_FRAMES_FOR_HITTING) {
             this.comeback();
         } else {
             this.hero.hittingEnterframe();
