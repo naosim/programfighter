@@ -42,7 +42,7 @@ var Hero = (function () {
         }
 
         sprite.physics.v.x = data.arrow * Hero.VX;
-        this.orientation = data.arrow;
+        if(data.arrow != 0) this.orientation = data.arrow;
         sprite.frame = 0;
         
         if(data.shot && game.shotLayer.childNodes.length <= 3 && sprite.age - this.lastShotAge > 4) {
