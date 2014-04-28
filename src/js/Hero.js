@@ -67,23 +67,9 @@ var Hero = (function () {
     };
 
     Hero.prototype.stepPhysics = function() {
-        var sprite = this.sprite;
-        var game = this.game;
-        sprite.physics.a = Physics.dim(0, 1.0 - sprite.physics.v.y * 0.1);
-        
-        sprite.physics.step();
-        if(sprite.physics.p.y > game.height - sprite.height) {
-            // ground
-            sprite.physics.v.y = 0;
-            sprite.physics.p.y = game.height - sprite.height;
-        }
-        if(sprite.physics.p.x < 0) {
-            // left wall
-            sprite.physics.p.x = 0;
-        } else if(sprite.physics.p.x > game.width - sprite.width) {
-            // right wall
-            sprite.physics.p.x = game.width - sprite.width;
-        }
+        this.sprite.physics.a = Physics.dim(0, 1.0 - this.sprite.physics.v.y * 0.1);
+        this.sprite.physics.step();
+        this.checkGround();
     }
 
     Hero.prototype.hit = function(hitSprite) {
@@ -116,6 +102,27 @@ var Hero = (function () {
         });
         return hitSprite;
     }
+
+
+    Hero.prototype.checkGround = function() {
+        this.checkLeft().checkRight().checkBottom();
+    }
+    Hero.prototype.checkBottom = function() {
+        if(this.sprite.physics.p.y > this.game.height - this.sprite.height) {
+            this.sprite.physics.v.y = 0;
+            this.sprite.physics.p.y = this.game.height - this.sprite.height;
+        }
+        return this;
+    };
+    Hero.prototype.checkLeft = function() {
+        if(this.sprite.physics.p.x < 0) this.sprite.physics.p.x = 0;
+        return this;
+    };
+    Hero.prototype.checkRight = function() {
+        if(this.sprite.physics.p.x > this.game.width - this.sprite.width) this.sprite.physics.p.x = this.game.width - this.sprite.width;
+        return this;
+    };
+
 
     Hero.IMG = 'img/images/chara1.png';
     Hero.VX = 2.0;
