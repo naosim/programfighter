@@ -7,6 +7,13 @@
         body {
             padding: 12px;
         }
+        .sky {
+            background-color: #99f;
+            width: 320px;
+        }
+        .ground {
+            background-color: #6a5;
+        }
     </style>
     
     <script src="./js/programfighter/enchant.min.js"></script>
@@ -43,7 +50,10 @@ function(step, pos, userData){
 <div style="width: 100%">自分: <span id="heroPowerText"></span></div>
 <div style="width: 100%">ボス: <span id="bossPowerText"></span></div>
 </td><td>
-<div id="enchant-stage" style="width:320px;height:320px"></div>
+<div class="sky"><div id="enchant-stage" class="sky" style="width:320px;height:320px"></div>
+<div class="ground">a</div>
+</div>
+
 </td></tr>
 </table>
 ■ルール<br>
