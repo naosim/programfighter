@@ -8,7 +8,7 @@ var ScoreView = (function () {
     };
     ScoreView.prototype.win = function(score, hero, boss){
         ScoreView.showStatus(score, hero, boss);
-        scoreText.innerHTML = game.score.score + " WIN!!";
+        scoreText.innerHTML = score.score + " WIN!!";
         bossPowerText.innerHTML = "";
 
     };
