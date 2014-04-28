@@ -1,27 +1,8 @@
 (function() {
-    var showStatus = function(score, hero, boss) {
-        wordsText.innerHTML = score.wordCount;
-        timeText.innerHTML = score.timeScore;
-        scoreText.innerHTML = score.score;
-        
-        var text = "";
-        for(var i = 0; i < hero.power; i++) {
-            text += "■";
-        }
-        heroPowerText.innerHTML = text;
-        
-        text = "";
-        for(var i = 0; i < boss.power; i++) {
-            text += "■";
-        }
-        
-        bossPowerText.innerHTML = text;
-        frameText.innerHTML = hero.sprite.age;
-    }
-    
-    var startGame = function(game, fps) {
+    var startGame = function(game, fps, getCode) {
         return function() {
-            var code = codeArea.value;
+            var code = getCode();
+
             var scene = new Scene();
             var hero = new Hero(game, code, program);
             var boss = new Boss(game);
@@ -37,8 +18,7 @@
             scene.addChild(shotLayer);
             scene.addChild(enemyShotLayer);
             scene.addChild(hero.sprite);
-            
-            
+
             game.popScene();
             game.pushScene(scene);
             game.score.resetTime();
@@ -46,45 +26,44 @@
             game.resume();
         };
     };
-    
-    
-    window.onload = function () {
-        enchant();
-        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];// keybindの解除
-        game = new Game(320, 240);
-        game.preload([Hero.IMG, Shot.IMG]);
-        game.start();
-        game.score = new Score();
 
-        startButton.addEventListener("click", startGame(game, 30));
-        slowStartButton.addEventListener("click", startGame(game, 10));
-
-        game.addEventListener('load', function() {
-            // 開始
-            startButton.click();
-        });
-        game.addEventListener('enterframe', function() {
+    var enterframe = function(game, scoreView) {
+        return function() {
             if(!game.hero || !game.boss) {
                 
             }
             else if(game.hero.isDead) {
-                showStatus(game.score, game.hero, game.boss);
-                scoreText.innerHTML = "0";
-                heroPowerText.innerHTML = "LOSE...";
+                scoreView.lose(game.score, game.hero, game.boss);
                 game.pause();
             }
             else if(game.boss.isDead) {
-                showStatus(game.score, game.hero, game.boss);
-                scoreText.innerHTML = game.score.score + " WIN!!";
-                bossPowerText.innerHTML = "";
+                scoreView.win(game.score, game.hero, game.boss);
                 game.pause();
             }
             else {
                 game.score.enterframe(game.hero.power);
-                showStatus(game.score, game.hero, game.boss);
+                scoreView.enterframe(game.score, game.hero, game.boss);
             }
-            
-        });
+
+        };
+    };
+
+    var onload = function(startButton, slowStartButton, scoreView, getCode) {
+        return function() {
+            enchant();
+            enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];// keybindの解除
+            var game = new Game(320, 240);
+            game.preload([Hero.IMG, Shot.IMG]);
+            game.start();
+            game.score = new Score();
+
+            var getCode = function() { return codeArea.value };
+            startButton.addEventListener("click", startGame(game, 30, getCode));
+            slowStartButton.addEventListener("click", startGame(game, 10, getCode));
+
+            game.addEventListener('load', function() { startButton.click(); });
+            game.addEventListener('enterframe', enterframe(game, new ScoreView()));
+        };
     };
     
     // tab accept
@@ -99,6 +78,8 @@
         }
         
     });
+
+    window.onload = onload(startButton, slowStartButton, new ScoreView(), function() { return codeArea.value });
 
 })();
 
