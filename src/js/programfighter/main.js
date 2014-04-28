@@ -1,12 +1,10 @@
 (function() {
-    var stage;
-
-    var startGame = function(game, fps, getCode) {
+    var startGame = function(game, fps, getCode, stage) {
         return function() {
             var code = getCode();
 
             var scene = new Scene();
-            var hero = new Hero(game, code, program);
+            var hero = new Hero(game, code, program, stage);
             var shotLayer = new Group();
             var enemyShotLayer = new Group();
             game.fps = fps;
@@ -29,22 +27,22 @@
         };
     };
 
-    var enterframe = function(game, scoreView) {
+    var enterframe = function(game, stage, scoreView) {
         return function() {
             if(!game.hero) {
                 
             }
             else if(game.hero.isDead) {
-                scoreView.lose(game.score, game.hero, game.bossPower());
+                scoreView.lose(game.score, game.hero, stage.bossPower());
                 game.pause();
             }
-            else if(game.isWin()) {
-                scoreView.win(game.score, game.hero, game.bossPower());
+            else if(stage.isWin()) {
+                scoreView.win(game.score, game.hero, stage.bossPower());
                 game.pause();
             }
             else {
                 game.score.enterframe(game.hero.power);
-                scoreView.enterframe(game.score, game.hero, game.bossPower());
+                scoreView.enterframe(game.score, game.hero, stage.bossPower());
             }
 
         };
@@ -52,7 +50,7 @@
 
     var onload = function(startButton, slowStartButton, scoreView, getCode) {
         return function() {
-            stage = new Stage();
+            var stage = new Stage();
             enchant();
             enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];// keybindの解除
             var game = new Game(320, 240);
@@ -60,15 +58,13 @@
             game.preload(stage.getImages());
             game.start();
             game.score = new Score();
-            game.isWin = function(){ return false; }
-            game.bossPower = function(){ return 0; }
 
             var getCode = function() { return codeArea.value };
-            startButton.addEventListener("click", startGame(game, 30, getCode));
-            slowStartButton.addEventListener("click", startGame(game, 10, getCode));
+            startButton.addEventListener("click", startGame(game, 30, getCode, stage));
+            slowStartButton.addEventListener("click", startGame(game, 10, getCode, stage));
 
             game.addEventListener('load', function() { startButton.click(); });
-            game.addEventListener('enterframe', enterframe(game, new ScoreView()));
+            game.addEventListener('enterframe', enterframe(game, stage, new ScoreView()));
         };
     };
     
@@ -98,23 +94,3 @@ var program = function(code, step, pos, userData) {
     eval('var func = ' + code + ';');
     return func(step, pos, userData);
 };
-
-var Stage = (function () {
-    function Stage(){};
-
-    /// 画像ファイル名のリストを取得する
-    Stage.prototype.getImages = function() {
-        return [];
-    };
-
-    /// ステージをセットアプする
-    Stage.prototype.setup = function(game, scene) {
-        var boss = new Boss(game);
-        game.boss = boss;
-        scene.addChild(boss.sprite);
-        game.isWin = function() { return boss.isDead; };
-        game.bossPower = function() { return boss.power; };
-    };
-
-    return Stage;
-})();

@@ -1,7 +1,8 @@
 var Hero = (function () {
-    function Hero(game, code, controlProgram) {
+    function Hero(game, code, controlProgram, stage) {
         this.power = Hero.MAX_POWER;
         this.game = game;
+        this.stage = stage;
         this.lastShotAge = 0;
         this.orientation = 1;
         this.isDead = false;
@@ -47,7 +48,7 @@ var Hero = (function () {
         
         this.stepPhysics();
         
-        if(sprite.physics.p.y == game.height - sprite.height && data.jump) {
+        if(this.stage.jumpableHero(this) && data.jump) {
             sprite.physics.v.y -= data.jump;
         }
         sprite.x = Math.floor(sprite.physics.p.x);
@@ -63,7 +64,7 @@ var Hero = (function () {
     Hero.prototype.stepPhysics = function() {
         this.sprite.physics.a = Physics.dim(0, 1.0 - this.sprite.physics.v.y * 0.1);
         this.sprite.physics.step();
-        this.checkGround();
+        this.stage.fixHeroPosition(this);
     }
 
     Hero.prototype.hit = function(hitSprite) {
@@ -81,26 +82,6 @@ var Hero = (function () {
     Hero.prototype.dead = function() {
         this.isDead = true;
     }
-
-    Hero.prototype.checkGround = function() {
-        this.checkLeft().checkRight().checkBottom();
-    }
-    Hero.prototype.checkBottom = function() {
-        if(this.sprite.physics.p.y > this.game.height - this.sprite.height) {
-            this.sprite.physics.v.y = 0;
-            this.sprite.physics.p.y = this.game.height - this.sprite.height;
-        }
-        return this;
-    };
-    Hero.prototype.checkLeft = function() {
-        if(this.sprite.physics.p.x < 0) this.sprite.physics.p.x = 0;
-        return this;
-    };
-    Hero.prototype.checkRight = function() {
-        if(this.sprite.physics.p.x > this.game.width - this.sprite.width) this.sprite.physics.p.x = this.game.width - this.sprite.width;
-        return this;
-    };
-
 
     Hero.IMG = 'img/images/chara1.png';
     Hero.VX = 2.0;
