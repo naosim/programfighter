@@ -1,48 +1,50 @@
 (function() {
+    var stage;
+
     var startGame = function(game, fps, getCode) {
         return function() {
             var code = getCode();
 
             var scene = new Scene();
             var hero = new Hero(game, code, program);
-            var boss = new Boss(game);
             var shotLayer = new Group();
             var enemyShotLayer = new Group();
             game.fps = fps;
             game.hero = hero;
-            game.boss = boss;
             game.shotLayer = shotLayer;
             game.enemyShotLayer = enemyShotLayer;
-            
-            scene.addChild(boss.sprite);
             scene.addChild(shotLayer);
             scene.addChild(enemyShotLayer);
             scene.addChild(hero.sprite);
+
+            stage.setup(game, scene);
 
             game.popScene();
             game.pushScene(scene);
             game.score.resetTime();
             game.score.setCode(code);
             game.resume();
+
+            
         };
     };
 
     var enterframe = function(game, scoreView) {
         return function() {
-            if(!game.hero || !game.boss) {
+            if(!game.hero) {
                 
             }
             else if(game.hero.isDead) {
-                scoreView.lose(game.score, game.hero, game.boss);
+                scoreView.lose(game.score, game.hero, game.bossPower());
                 game.pause();
             }
-            else if(game.boss.isDead) {
-                scoreView.win(game.score, game.hero, game.boss);
+            else if(game.isWin()) {
+                scoreView.win(game.score, game.hero, game.bossPower());
                 game.pause();
             }
             else {
                 game.score.enterframe(game.hero.power);
-                scoreView.enterframe(game.score, game.hero, game.boss);
+                scoreView.enterframe(game.score, game.hero, game.bossPower());
             }
 
         };
@@ -50,12 +52,16 @@
 
     var onload = function(startButton, slowStartButton, scoreView, getCode) {
         return function() {
+            stage = new Stage();
             enchant();
             enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];// keybindの解除
             var game = new Game(320, 240);
             game.preload([Hero.IMG, Shot.IMG]);
+            game.preload(stage.getImages());
             game.start();
             game.score = new Score();
+            game.isWin = function(){ return false; }
+            game.bossPower = function(){ return 0; }
 
             var getCode = function() { return codeArea.value };
             startButton.addEventListener("click", startGame(game, 30, getCode));
@@ -92,3 +98,23 @@ var program = function(code, step, pos, userData) {
     eval('var func = ' + code + ';');
     return func(step, pos, userData);
 };
+
+var Stage = (function () {
+    function Stage(){};
+
+    /// 画像ファイル名のリストを取得する
+    Stage.prototype.getImages = function() {
+        return [];
+    };
+
+    /// ステージをセットアプする
+    Stage.prototype.setup = function(game, scene) {
+        var boss = new Boss(game);
+        game.boss = boss;
+        scene.addChild(boss.sprite);
+        game.isWin = function() { return boss.isDead; };
+        game.bossPower = function() { return boss.power; };
+    };
+
+    return Stage;
+})();

@@ -1,22 +1,22 @@
 var ScoreView = (function () {
     function ScoreView() {
     }
-    ScoreView.prototype.lose = function(score, hero, boss){
-        ScoreView.showStatus(score, hero, boss);
+    ScoreView.prototype.lose = function(score, hero, bossPower){
+        ScoreView.showStatus(score, hero, bossPower);
         scoreText.innerHTML = "0";
         heroPowerText.innerHTML = "LOSE...";
     };
-    ScoreView.prototype.win = function(score, hero, boss){
-        ScoreView.showStatus(score, hero, boss);
+    ScoreView.prototype.win = function(score, hero, bossPower){
+        ScoreView.showStatus(score, hero, bossPower);
         scoreText.innerHTML = score.score + " WIN!!";
         bossPowerText.innerHTML = "";
 
     };
-    ScoreView.prototype.enterframe = function(score, hero, boss){
-        ScoreView.showStatus(score, hero, boss);
+    ScoreView.prototype.enterframe = function(score, hero, bossPower){
+        ScoreView.showStatus(score, hero, bossPower);
     };
 
-    ScoreView.showStatus = function(score, hero, boss) {
+    ScoreView.showStatus = function(score, hero, bossPower) {
         wordsText.innerHTML = score.wordCount;
         timeText.innerHTML = score.timeScore;
         scoreText.innerHTML = score.score;
@@ -28,7 +28,7 @@ var ScoreView = (function () {
         heroPowerText.innerHTML = text;
         
         text = "";
-        for(var i = 0; i < boss.power; i++) {
+        for(var i = 0; i < bossPower; i++) {
             text += "■";
         }
         

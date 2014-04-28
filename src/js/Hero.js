@@ -24,12 +24,6 @@ var Hero = (function () {
         var sprite = this.sprite;
         var game = this.game;
 
-        var hitSprite = this.getHitSprite();
-        if(hitSprite) {
-            this.state.hit(hitSprite);
-            return;
-        }
-
         try {
             var heroPos = {"x":game.hero.sprite.x, "y":game.hero.sprite.y};
             var data = this.controlProgram(this.code, sprite.age, heroPos, this.userData);
@@ -73,7 +67,6 @@ var Hero = (function () {
     }
 
     Hero.prototype.hit = function(hitSprite) {
-        this.power -= 1;
         this.sprite.physics.v.x = -3;
         this.sprite.physics.v.y = -3;
     };
@@ -88,21 +81,6 @@ var Hero = (function () {
     Hero.prototype.dead = function() {
         this.isDead = true;
     }
-
-    Hero.prototype.getHitSprite = function() {
-        var sprite = this.sprite;
-
-        if(sprite.intersect(this.game.boss.sprite)) return this.game.boss.sprite;
-
-        var hitSprite = null;
-        this.game.enemyShotLayer.childNodes.forEach(function(s) {
-            if(sprite.intersect(s)) {
-                hitSprite = s;
-            }
-        });
-        return hitSprite;
-    }
-
 
     Hero.prototype.checkGround = function() {
         this.checkLeft().checkRight().checkBottom();

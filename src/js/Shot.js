@@ -7,12 +7,17 @@ var Shot = (function () {
         sprite.x = x;
         sprite.y = y;
         sprite.addEventListener('enterframe', function() {
+            sprite.x += 6 * orientation;
             if(sprite.x < 0 || sprite.x > game.width) {
                 sprite.parentNode.removeChild(sprite);
+                return;
             }
-            
-            
-            sprite.x += 6 * orientation;
+
+            if(isEnemy && sprite.intersect(game.hero.sprite) && game.hero.state.hit(this)) {
+                game.hero.power -= 1;
+                sprite.parentNode.removeChild(sprite);
+                return;
+            }            
         });
     }
     Shot.IMG = "img/images/icon0.png";

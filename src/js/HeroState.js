@@ -10,7 +10,7 @@ var HeroState = (function () {
         this.hero.state = this;
         this.entry();
     }
-    HeroState.prototype.hit = function(sprite){};
+    HeroState.prototype.hit = function(sprite){return false};
     HeroState.prototype.comeback = function(){};
     HeroState.prototype.dead = function(){};
     HeroState.prototype.enterframe = function(){};
@@ -28,6 +28,7 @@ var HeroNomalState = (function (_super) {
         _super.prototype.hit.call(this, sprite);
         this.hero.hit(sprite);
         new HittingState(this.hero);
+        return true;
     };
     HeroNomalState.prototype.enterframe = function(){
         this.hero.normalEnterframe();
