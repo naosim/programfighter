@@ -3,13 +3,38 @@ var ScoreView = (function () {
     }
     ScoreView.prototype.lose = function(score, hero, bossPower){
         ScoreView.showStatus(score, hero, bossPower);
-        scoreText.innerHTML = "0";
-        heroPowerText.innerHTML = "LOSE...";
     };
     ScoreView.prototype.win = function(score, hero, bossPower){
         ScoreView.showStatus(score, hero, bossPower);
-        scoreText.innerHTML = score.score + " WIN!!";
-        bossPowerText.innerHTML = "";
+
+        scoreBase.style['display'] = 'block';
+
+        var countUp = function(max, elm) {
+            var i = 0;
+            return function() {
+                var up = parseInt((max - i) / 3, 10);
+                if(up != 0) {
+                    i += up;
+                } else {
+                    i = max;
+                }
+
+                if(elm)elm.innerHTML = i;
+                
+                return up != 0;
+            };
+        };
+
+        [powerScore, timeScore, codeScore, totalScore].forEach(function(e) {
+            e.innerHTML = '';
+        });
+
+        new IntervalChain()
+        .add(countUp(score.power, powerScore))
+        (countUp(score.timeScore, timeScore))
+        (countUp(score.wordCount, codeScore))
+        (countUp(score.score, totalScore))();
+
 
     };
     ScoreView.prototype.enterframe = function(score, hero, bossPower){
@@ -17,24 +42,14 @@ var ScoreView = (function () {
     };
 
     ScoreView.showStatus = function(score, hero, bossPower) {
-        wordsText.innerHTML = score.wordCount;
-        timeText.innerHTML = score.timeScore;
-        scoreText.innerHTML = score.score;
-        
-        var text = "";
-        for(var i = 0; i < hero.power; i++) {
-            text += "■";
-        }
-        heroPowerText.innerHTML = text;
-        
-        text = "";
-        for(var i = 0; i < bossPower; i++) {
-            text += "■";
-        }
-        
-        bossPowerText.innerHTML = text;
+        heroCell.style['width'] = Math.max(Math.floor(hero.power * 100 / Hero.MAX_POWER), 0.1) + '%';
+        bossCell.style['width'] = Math.max(Math.floor(bossPower * 100 / Hero.MAX_POWER), 0.1) + '%';
         frameText.innerHTML = hero.sprite.age;
     };
+
+    ScoreView.prototype.dismiss = function() {
+        scoreBase.style['display'] = 'none';
+    }
 
     return ScoreView;
 })();

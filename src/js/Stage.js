@@ -34,7 +34,7 @@ var Stage = (function () {
 
     /// 主人公がジャンプ可能かどうかを返す
     Stage.prototype.jumpableHero = function(hero) {
-        return hero.sprite.physics.p.y > this.game.height - hero.sprite.height;
+        return hero.sprite.physics.p.y >= this.game.height - hero.sprite.height;
     }
 
     return Stage;

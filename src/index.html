@@ -4,20 +4,72 @@
 <meta charset="utf-8">
     <title>ProgramFighter</title>
     <style>
+
         body {
             padding: 12px;
+        }
+        textarea {
+            width: 360px;
+            height: 240px;
+            font-size:12pt;
+        }
+        .background {
+            width: 320px;
+            height: 320px;
+        }
+        .power_back {
+            width:100%; 
+            height:10px; 
+            border-spacing:0;
+            margin-top: 4px;
+        }
+        .power {
+            background: #ff0;
+        }
+        .powerother {
+            background: #f00;
         }
         .sky {
             background-color: #99f;
             width: 320px;
+            border-style: solid;
+            border-width: 2px;
+            border-color: #888;
+            position: absolute;
         }
         .ground {
             background-color: #6a5;
+            height: 40px;
         }
+        .overlaytext {
+            margin-top:32px;
+            font-size: 32pt;
+            font-weight: bold;
+            color: #ff0;
+            width: 320px;
+            text-align: center;
+            text-shadow: 2px 2px 1px #000,
+                -2px 2px 1px #000,
+                2px -2px 1px #000,
+                -2px -2px 1px #000;
+        }
+        .score {
+            font-size: 18pt;
+            line-height: 0.5em;
+        }
+        .clm_ringht {
+            width: 120px;
+            text-align: right;
+        }
+        p {
+            line-height: 0em;
+        }
+
     </style>
     
     <script src="./js/programfighter/enchant.min.js"></script>
     <script src="./js/programfighter/physics.js"></script>
+    <script src="./js/programfighter/IntervalChain.js"></script>
     <script src="./js/programfighter/extends.js"></script>
     <script src="./js/programfighter/Hero.js"></script>
     <script src="./js/programfighter/HeroState.js"></script>
@@ -29,31 +81,48 @@
     <script src="./js/Stage.js"></script>
 </head>
 <body>
-<table border="1" style="width: 100%"><tr><td>
-<TextArea id="codeArea" style="width:320px; height:120px;">
+<table border="1" style="width: 400px"><tr><td>
+プログラム
+<textarea id="codeArea">
 function(step, pos, userData){
     return {
-        "arrow": RIGHT,
+        "arrow": 0,
         "jump": SHORT_JUMP,
         "shot": true
     };
 }
 </TextArea><br />
+<div style="width: 100%">経過フレーム: <span id="frameText"></span></div>
 <button id="startButton">start</button>
 <button id="slowStartButton">start(slow)</button>
-<div style="width: 100%">パワーポイント: <span id="powerScoreText"></span></div>
-<div style="width: 100%">時間ポイント: <span id="timeText"></span></div>
-<div style="width: 100%">コードポイント: <span id="wordsText"></span></div>
-<div style="width: 100%">合計ポイント: <span id="scoreText"></span></div>
-<br>
-<div style="width: 100%">経過フレーム: <span id="frameText"></span></div>
-<div style="width: 100%">自分: <span id="heroPowerText"></span></div>
-<div style="width: 100%">ボス: <span id="bossPowerText"></span></div>
 </td><td>
-<div class="sky"><div id="enchant-stage" class="sky" style="width:320px;height:320px"></div>
-<div class="ground">a</div>
-</div>
+<div class="background">
+    <div class="sky">
+        <table class="power_back"><tr><td id="heroCell" class="power" style="width:100%"></td><td class="powerother"></td></tr></table>
+        <table class="power_back"><tr><td id="bossCell" class="power" style="width:100%"></td><td class="powerother"></td></tr></table>
 
+        <div id="enchant-stage" style="width:320px;height:320px"></div>
+        <div class="ground">
+        </div>
+    </div>
+    <div id="scoreBase" class="overlaytext" style="position: absolute; display:none;">
+        <p>YOU WIN!</p>
+        <table style="text-align: left; font-size: 18pt; margin-left:32px">
+            <tr><td>POWER</td><td class="clm_ringht" id="powerScore"></td></tr>
+            <tr><td>TIME</td><td class="clm_ringht" id="timeScore"></td></tr>
+            <tr><td>CODE</td><td class="clm_ringht" id="codeScore"></td></tr>
+            <tr style="font-size:24pt"><td>TOTAL</td><td class="clm_ringht" id="totalScore">    </td></tr>
+        </table>
+        <!--
+        <p class="score">POWER: <span id="powerScore"></span></p>
+        <p class="score">TIME: <span id="timeScore"></span></p>
+        
+        <p class="score">CODE: <span id="codeScore"></span></p>
+        <p class="score">TOTAL: <span id="totalScore"></span></p>
+        -->
+    </div>
+    
+</div>
 </td></tr>
 </table>
 ■ルール<br>

@@ -1,7 +1,8 @@
 (function() {
-    var startGame = function(game, fps, getCode, stage) {
+    var startGame = function(game, fps, getCode, stage, scoreView) {
         return function() {
             var code = getCode();
+            scoreView.dismiss();
 
             var scene = new Scene();
             var hero = new Hero(game, code, program, stage);
@@ -58,13 +59,14 @@
             game.preload(stage.getImages());
             game.start();
             game.score = new Score();
+            var scoreView = new ScoreView();
 
             var getCode = function() { return codeArea.value };
-            startButton.addEventListener("click", startGame(game, 30, getCode, stage));
-            slowStartButton.addEventListener("click", startGame(game, 10, getCode, stage));
+            startButton.addEventListener("click", startGame(game, 30, getCode, stage, scoreView));
+            slowStartButton.addEventListener("click", startGame(game, 10, getCode, stage, scoreView));
 
             game.addEventListener('load', function() { startButton.click(); });
-            game.addEventListener('enterframe', enterframe(game, stage, new ScoreView()));
+            game.addEventListener('enterframe', enterframe(game, stage, scoreView));
         };
     };
     

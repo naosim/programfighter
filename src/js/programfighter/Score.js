@@ -10,13 +10,13 @@ var Score = (function () {
         this.startTime = new Date().getTime();
     };
     Score.prototype.setCode = function(code) {
-        this.wordCount = countWords(code);
+        this.wordCount = -countWords(code);
     };
     Score.prototype.enterframe = function(power) {
         if(this.startTime < 0) return;
         this.timeScore = Math.floor((30 - Math.floor((new Date().getTime() - this.startTime)/1000)) * 100 / 30);
-        this.power = Math.floor(power * 99 / Hero.MAX_POWER);
-        this.score = this.power * 100 + this.timeScore - this.wordCount;
+        this.power = Math.floor(power * 99 / Hero.MAX_POWER) * 100;
+        this.score = this.power + this.timeScore + this.wordCount;
     };
     
     var replaceAll = function(expression, org, dest){  
