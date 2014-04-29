@@ -49,7 +49,7 @@
         };
     };
 
-    var onload = function(startButton, slowStartButton, scoreView, getCode) {
+    var onload = function(startButton, slowStartButton) {
         return function() {
             var stage = new Stage();
             enchant();
@@ -83,7 +83,7 @@
         
     });
 
-    window.onload = onload(startButton, slowStartButton, new ScoreView(), function() { return codeArea.value });
+    window.onload = onload(startButton, slowStartButton);
 
 })();
 
