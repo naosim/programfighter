@@ -11,7 +11,6 @@ var Stage = (function () {
         var boss = new Boss(game);
         this.game = game;
         this.boss = boss;
-        game.boss = boss;
         scene.addChild(boss.sprite);
     };
 
